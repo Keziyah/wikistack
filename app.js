@@ -25,10 +25,31 @@ app.use('/', routes);
 
 app.use('/wiki', wikiRouter);
 
+app.get("/", function(req, res) {
+    Page.findAll({
+            where: {
+                status: 'open'
+            }
+        })
 
-models.User.sync({})
+        .then(function(foundPages) {
+            // console.log("FOUNDPAGES!!!!!", foundPages)
+            res.render("index", {
+                pages: foundPages
+            })
+        })
+        .catch(function(err) {
+            console.error(err)
+        })
+})
+
+models.User.sync({
+        //force: true
+    })
     .then(function() {
-        return models.Page.sync({})
+        return models.Page.sync({
+            //force: true
+        })
     })
     .then(function() {
         app.listen(3000, function() {
