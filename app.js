@@ -5,6 +5,7 @@ const nunjucks = require('nunjucks');
 const routes = require('./routes');
 const bodyParser = require('body-parser');
 const models = require('./models');
+const wikiRouter = require('./routes/wiki');
 
 nunjucks.configure('views', {
     noCache: true
@@ -21,6 +22,9 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use('/', routes);
+
+app.use('/wiki', wikiRouter);
+
 
 models.User.sync({})
     .then(function() {
