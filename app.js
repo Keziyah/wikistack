@@ -1,11 +1,14 @@
-const express = require( 'express' );
+const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const nunjucks = require('nunjucks');
 const routes = require('./routes');
 const bodyParser = require('body-parser');
+const models = require('./models');
 
-nunjucks.configure('views', {noCache: true});
+nunjucks.configure('views', {
+    noCache: true
+});
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
@@ -13,10 +16,19 @@ app.use(morgan('combined'));
 
 app.use(express.static(__dirname + '/public'));
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.use('/', routes);
 
-app.listen(5000, function(){
-    console.log('listening on 5000');
-})
+models.User.sync({})
+    .then(function() {
+        return models.Page.sync({})
+    })
+    .then(function() {
+        app.listen(3000, function() {
+            console.log('Server is listening on port 3000!');
+        });
+    })
+    .catch(console.error);
